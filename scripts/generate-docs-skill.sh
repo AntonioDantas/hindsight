@@ -585,11 +585,13 @@ for md_file in skill_dir.rglob("*.md"):
         # Resolve relative to the file's directory
         resolved = (md_file.parent / url).resolve()
         if not str(resolved).startswith(str(skill_dir)):
-            errors.append(f"  {md_file.relative_to(skill_dir)}: '{url}' -> {resolved}")
+            errors.append(f"  {md_file.relative_to(skill_dir)}: '{url}' -> outside the skill directory")
+        elif not resolved.exists():
+            errors.append(f"  {md_file.relative_to(skill_dir)}: '{url}' -> no such file")
 
 if errors:
-    print("ERROR: The following links point outside the skill directory.")
-    print("All links must be absolute URLs or relative paths within the skill.")
+    print("ERROR: The following links are broken.")
+    print("All links must be absolute URLs, or relative paths to a file inside the skill.")
     for e in errors:
         print(e)
     sys.exit(1)
